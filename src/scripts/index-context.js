@@ -37,7 +37,7 @@ async function main() {
 
   const args = parseArgs();
 
-  if (!args.file && !args.text) {
+  if (!args.file && !args.text && !args.dir) {
     console.log('Usage:');
     console.log('  npm run index -- --file <path> --project <name> [--type code|doc|text]');
     console.log('  npm run index -- --text "content" --project <name>');
