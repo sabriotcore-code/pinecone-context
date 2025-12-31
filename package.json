@@ -4,19 +4,30 @@
   "description": "Claude Code context persistence with Pinecone vector database",
   "main": "src/index.js",
   "type": "module",
+  "bin": {
+    "pinecone-mcp": "./src/mcp-server.js"
+  },
   "scripts": {
     "start": "node src/index.js",
+    "mcp": "node src/mcp-server.js",
     "index": "node src/scripts/index-context.js",
     "search": "node src/scripts/search.js",
     "setup": "node src/scripts/setup-index.js",
     "test": "node src/scripts/test-connection.js"
   },
-  "keywords": ["pinecone", "vector-database", "claude", "context", "rag"],
+  "keywords": [
+    "pinecone",
+    "vector-database",
+    "claude",
+    "context",
+    "rag"
+  ],
   "author": "Matt",
   "license": "MIT",
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.25.1",
     "@pinecone-database/pinecone": "^4.0.0",
-    "openai": "^4.0.0",
-    "dotenv": "^16.0.0"
+    "dotenv": "^16.0.0",
+    "openai": "^4.0.0"
   }
 }
