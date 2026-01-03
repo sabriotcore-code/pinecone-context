@@ -27,6 +27,32 @@ const config = {
   },
 };
 
+// ============================================================================
+// FAST CACHE (embeddings are expensive, ~300ms each)
+// ============================================================================
+const embeddingCache = new Map(); // query -> embedding
+const searchCache = new Map();    // query+project -> results
+const CACHE_TTL = 300000;         // 5 minutes
+
+function getCached(cache, key) {
+  const item = cache.get(key);
+  if (!item) return null;
+  if (Date.now() > item.expiresAt) {
+    cache.delete(key);
+    return null;
+  }
+  return item.value;
+}
+
+function setCache(cache, key, value) {
+  // Limit cache size
+  if (cache.size > 100) {
+    const firstKey = cache.keys().next().value;
+    cache.delete(firstKey);
+  }
+  cache.set(key, { value, expiresAt: Date.now() + CACHE_TTL });
+}
+
 // Lazy-initialized clients
 let pinecone = null;
 let openai = null;
@@ -53,17 +79,30 @@ async function getIndex() {
   return index;
 }
 
-// Generate embedding for search query
+// Generate embedding for search query (cached)
 async function generateEmbedding(text) {
+  // Check cache first (embeddings are expensive ~300ms)
+  const cached = getCached(embeddingCache, text);
+  if (cached) return cached;
+
   const response = await getOpenAI().embeddings.create({
     model: config.openai.embeddingModel,
     input: text,
   });
-  return response.data[0].embedding;
+  const embedding = response.data[0].embedding;
+
+  // Cache for future use
+  setCache(embeddingCache, text, embedding);
+  return embedding;
 }
 
 // Tool implementations
 async function searchContext(query, project = null, topK = 5) {
+  // Check search cache first
+  const cacheKey = `${query}:${project || 'all'}:${topK}`;
+  const cached = getCached(searchCache, cacheKey);
+  if (cached) return cached;
+
   const idx = await getIndex();
   const queryEmbedding = await generateEmbedding(query);
 
@@ -76,13 +115,17 @@ async function searchContext(query, project = null, topK = 5) {
     includeMetadata: true,
   });
 
-  return results.matches.map(match => ({
+  const formattedResults = results.matches.map(match => ({
     score: match.score,
     text: match.metadata?.text,
     project: match.metadata?.project,
     type: match.metadata?.type,
     filePath: match.metadata?.filePath,
   }));
+
+  // Cache results for future queries
+  setCache(searchCache, cacheKey, formattedResults);
+  return formattedResults;
 }
 
 async function listProjects() {
