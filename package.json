@@ -13,7 +13,8 @@
     "index": "node src/scripts/index-context.js",
     "search": "node src/scripts/search.js",
     "setup": "node src/scripts/setup-index.js",
-    "test": "node src/scripts/test-connection.js"
+    "test": "node src/scripts/test-connection.js",
+    "deploy-sync": "node src/scripts/deployment-sync.js"
   },
   "keywords": [
     "pinecone",
