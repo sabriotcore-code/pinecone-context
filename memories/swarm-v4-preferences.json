@@ -1,0 +1,30 @@
+{
+  "id": "swarm-v4-preferences-2026-01-10",
+  "timestamp": "2026-01-10T14:45:00Z",
+  "category": "system_preferences",
+  "tags": ["swarm", "v4", "preferences", "shortcuts", "rent-manager"],
+  "content": {
+    "summary": "Matt's swarm preferences updated 2026-01-10",
+    "rules": [
+      "ALWAYS use latest swarm version (currently V4)",
+      "\"run swarm\" = execute via Swarm V4 smart router",
+      "\"swarm fast\" = use /swarm-v4/race/cheap (~100ms)",
+      "\"swarm quality\" = use /swarm-v4/race/quality (Claude/GPT)",
+      "\"swarm all\" = use /swarm-v4/execute/parallel (all providers)",
+      "All AI computation in cloud, never local",
+      "Rent Manager queries via rei-data-sync API"
+    ],
+    "urls": {
+      "swarm": "https://web-production-bdfb4.up.railway.app",
+      "rei-data-sync": "https://rei-data-sync-api-production.up.railway.app"
+    },
+    "rentManager": {
+      "locations": [
+        { "id": 1, "name": "ULTRA" },
+        { "id": 3, "name": "REI" }
+      ],
+      "syncInterval": "5 minutes"
+    }
+  },
+  "embedding_text": "Swarm V4 preferences: Always use latest swarm version. Run swarm command uses V4 smart router. Swarm fast for quick queries via Groq. Swarm quality for Claude/GPT. Rent Manager data via rei-data-sync PostgreSQL API. Locations ULTRA (1) and REI (3). Auto-sync every 5 minutes."
+}
